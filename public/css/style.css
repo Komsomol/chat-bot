@@ -20,6 +20,19 @@ body{
     padding: 10px;
 }
 
+.text{
+    height: 45px;
+    width: 300px;
+}
+
+.submit{
+    height: 50px;
+    width: 100px;
+    margin-left: 10px;
+    font-family: inherit;
+    font-size: 20px;
+}
+
 .output{
     /* width: 500px; */
     /* height: 500px; */
@@ -28,4 +41,8 @@ body{
     /* align-items: revert; */
     justify-content: center;
     border:1px solid black;
+}
+
+.message{
+    padding: 10px;
 }
