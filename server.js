@@ -1,27 +1,43 @@
+// environment variables
 import dotenv from 'dotenv';
 dotenv.config();
 
+// server
 import express from 'express';
 import axios from 'axios';
 import bodyParser from 'body-parser';
+
+// things for the html
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import path from 'path';
+
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+// this is needed for drname to work correctly
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-console.log(process.env.OPENAI_API_KEY, process.env.OPENAI_ORGANIZATION_ID);
+// Define the static file path
+app.use(express.static(path.join(__dirname,'public')));
 
+// open ai
 import { Configuration, OpenAIApi } from "openai";
 
+// set up keys for openai
 const configuration = new Configuration({
-    organization: "org-GnDuM0r65kWLEh71D0RNntcx",
+    organization: process.env.OPENAI_ORGANIZATION_ID,
     apiKey: process.env.OPENAI_API_KEY,
 });
 
 const openai = new OpenAIApi(configuration);
-// const response = await openai.listEngines();
-// console.log(response.data)
+
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/public/index.html');
+});
 
 app.post('/chat', async (req, res) => {
     const userMessage = req.body.message;
@@ -50,13 +66,13 @@ app.post('/chat', async (req, res) => {
             'Content-Type': 'application/json'
         }
         });
-        console.log(response.data);
+        console.log(typeof response.data);
         console.log(response.data.choices[0]);
-        // res.json(response.data.choices[0].text);
+        res.json(response.data.choices[0]);
     } catch (error) {
         console.error(error);
         console.log(error.response.data);
-        // res.json({ error: 'There was an error processing your request' , message: error});
+        res.json({ error: 'There was an error processing your request' , message: error});
     }
 });
   

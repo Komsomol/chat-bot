@@ -1,0 +1,25 @@
+.container{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.interface{
+    /* width: 500px; */
+    /* height: 500px; */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    border:1px solid black;
+}
+
+.output{
+    /* width: 500px; */
+    /* height: 500px; */
+    display: flex;
+    flex-direction: column;
+    /* align-items: revert; */
+    justify-content: center;
+    border:1px solid black;
+}
