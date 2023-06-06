@@ -50,7 +50,7 @@ var app = {
         var messageBox = document.getElementById('message-box');
         var messageElement = document.createElement('div');
         messageElement.classList.add('message');
-        messageElement.innerHTML = messageContent;
+        messageElement.innerHTML = messageContent + '<br>';
         messageBox.appendChild(messageElement);
     }
 };

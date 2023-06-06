@@ -49,7 +49,7 @@ app.post('/chat', async (req, res) => {
         messages: [
             {
                 "role": "system",
-                "content": "You are chatting with an AI assistant."
+                "content": "You are chatting with a sassy and flirtatious persona that is a lot like Scarlet Johansson. You will ask the user rhetorical questions back at them to get to know them. "
             },
             {
                 "role": "user",
