@@ -52,6 +52,52 @@ var app = {
         messageElement.classList.add('message');
         messageElement.innerHTML = messageContent;
         messageBox.appendChild(messageElement);
+
+        // synth voice
+        app.speech2text(messageContent);
+    },
+    speech2text: function(message) {
+        var myHeaders = new Headers();
+        myHeaders.append("xi-api-key", "40dc5ac7de510a1eb0f100422a2c0f36");
+        myHeaders.append("accept", "audio/mpeg");
+        myHeaders.append("Content-Type", "application/json");
+
+        var raw = JSON.stringify({
+        "text": message,
+        "model_id": "eleven_monolingual_v1",
+        "voice_settings": {
+            "stability": 0.5,
+            "similarity_boost": 0.5
+        }
+        });
+
+        var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+        };
+
+        fetch("https://api.elevenlabs.io/v1/text-to-speech/MF3mGyEYCl7XYWbV9V6O", requestOptions)
+        .then(response => response.blob())
+        .then(blob => {
+            app.playAudio(blob);
+        })
+        .catch(error => console.log('error', error));
+    },
+    playAudio: function(blob) {
+        // var audio = document.getElementById('audio');
+        // audio.src = URL.createObjectURL(blob);
+        // audio.play();
+
+        var url = URL.createObjectURL(blob);
+        var audio = document.createElement('audio');
+        audio.style.display = "block";
+        audio.src = url;
+        audio.controls = true;
+        var messageBox = document.getElementById('message-box');
+        messageBox.appendChild(audio);
+        audio.play();
     }
 };
 
