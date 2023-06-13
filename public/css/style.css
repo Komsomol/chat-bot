@@ -10,8 +10,6 @@ body{
 }
 
 .interface{
-    /* width: 500px; */
-    /* height: 500px; */
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -34,11 +32,8 @@ body{
 }
 
 .output{
-    /* width: 500px; */
-    /* height: 500px; */
     display: flex;
-    flex-direction: column;
-    /* align-items: revert; */
+    flex- : column;
     justify-content: center;
     border:1px solid black;
 }

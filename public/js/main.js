@@ -1,18 +1,26 @@
+
 console.log('hello world');
 
 var app = {
-    button: document.getElementById('submit'),
+    submitBtn: document.getElementById('submitBtn'),
+    recordBtn: document.getElementById('recordBtn'),
     input: document.getElementById('input'),
+    stopBtn: document.getElementById('stopBtn'),
     currentMessage: null,
+    audioChunks: [],
+    mediaRecorder: null,
     init: function() {
         console.log('app init');
-        app.button.addEventListener('click', app.click);
-
+        app.submitBtn.addEventListener('click', app.click);
+        app.recordBtn.addEventListener('click', app.record);
+        app.stopBtn.addEventListener('click', app.stopRecording);
         app.main();
     },
+    
     main: function() {
         console.log('app main');
     },
+
     click: function() {
         console.log('app click');
         var message = app.input.value;
@@ -44,6 +52,7 @@ var app = {
             app.receiveMessage(data);
         });
     },
+    
     receiveMessage: function(message) {
         console.log(message.message.content);
         let messageContent = message.message.content;
@@ -56,6 +65,7 @@ var app = {
         // synth voice
         app.speech2text(messageContent);
     },
+
     speech2text: function(message) {
         var myHeaders = new Headers();
         myHeaders.append("xi-api-key", "40dc5ac7de510a1eb0f100422a2c0f36");
@@ -85,10 +95,9 @@ var app = {
         })
         .catch(error => console.log('error', error));
     },
+
+
     playAudio: function(blob) {
-        // var audio = document.getElementById('audio');
-        // audio.src = URL.createObjectURL(blob);
-        // audio.play();
 
         var url = URL.createObjectURL(blob);
         var audio = document.createElement('audio');
@@ -98,7 +107,72 @@ var app = {
         var messageBox = document.getElementById('message-box');
         messageBox.appendChild(audio);
         audio.play();
+    },
+
+    record: function() {
+        // write code to record audio from html and save to file
+        console.log('record');
+
+        window.navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => { 
+            
+            app.mediaRecorder = new MediaRecorder(stream);
+            
+            app.mediaRecorder.start();
+
+            app.audioChunks = [];
+            
+            app.mediaRecorder.addEventListener("dataavailable", event => {
+                app.audioChunks.push(event.data);
+            });
+            
+        });
+
+    },
+
+    stopRecording: function() {
+        // stop recording
+        console.log('stop recording');
+
+        app.mediaRecorder.stop();
+        
+        app.mediaRecorder.addEventListener("stop", () => {
+            console.log('stop event fired')
+
+            const audioBlob = new Blob(app.audioChunks, {
+                type: 'audio/wav'
+            });
+
+            const audioUrl = URL.createObjectURL(audioBlob);
+            const audio = new Audio(audioUrl);
+            audio.play();
+
+            // empty audio chunks
+            app.audioChunks = [];
+
+            // send audio to server
+            app.sendAudio(audioBlob);
+
+        });
+
+    },
+    
+    sendAudio: function(audioBlob) {
+        // send audio to server
+        console.log('send audio');
+
+        // create FormData to send to the server
+        let fd = new FormData();
+        fd.append('audio', audioBlob, 'audio.wav');
+
+        // send Blob to server via Fetch API
+        fetch('/upload', {
+            method: 'POST',
+            body: fd
+        });
+
     }
+
 };
 
 window.onload = app.init;
